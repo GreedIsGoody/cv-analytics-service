@@ -17,7 +17,7 @@ class VehicleDetector:
         
         
         if not os.path.exists(image_path):
-            raise FileNotFoundError(f"Файл {image_path} не найден!")
+            raise FileNotFoundError(f"was {image_path} not found!")
 
         
         results = self.model(image_path, conf=conf_threshold)[0]
