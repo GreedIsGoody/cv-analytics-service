@@ -55,11 +55,12 @@ class VehicleDetector:
     def save_annotated_image(self, results_dict: dict, output_path: str) -> str:
         
         raw_results = results_dict["raw_results"]
-        
-        
-        annotated_frame = raw_results.plot()
 
-       
+        if isinstance(raw_results, list):
+            annotated_frame = raw_results[0].plot()
+        else:
+            annotated_frame = raw_results.plot()
+
         cv2.imwrite(output_path, annotated_frame)
         print(f"Annotated image saved: {output_path}")
         return output_path
