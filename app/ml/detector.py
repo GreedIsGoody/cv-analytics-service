@@ -25,7 +25,7 @@ class VehicleDetector:
         detections = []
         counts = {"car": 0, "motorcycle": 0, "bus": 0, "truck": 0}
 
-        
+        #Iterating a results what we receiving from AI such as box.cls = ID, box.conf = level of confidence and coordinates
         if results.boxes is not None:
             for box in results.boxes:
                 cls_id = int(box.cls[0].item())
