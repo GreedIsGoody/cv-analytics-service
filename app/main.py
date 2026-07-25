@@ -4,6 +4,7 @@ from typing import List, Annotated
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, status, File
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession 
 from sqlalchemy.future import select 
 from sqlalchemy.orm import selectinload 
@@ -87,3 +88,23 @@ async def get_all_tasks(db: AsyncSession = Depends(get_db)):
     result = await db.execute(query)
     tasks = result.scalars().all()
     return tasks
+
+
+@app.get("/api/v1/tasks/{task_id}/image", response_class=FileResponse)
+async def get_task_image(task_id: str, db: Annotated[AsyncSession, Depends(get_db)]):
+    result = await db.execute(
+        select(DetectionTask).where(DetectionTask.id == task_id)
+    )
+    task = result.scalar_one_or_none()
+    
+    #Checking if task exists
+    if not task:
+        raise HTTPException(status_code=404, detail= "Task was not found")
+    
+    file_path = UPLOAD_DIR / task.filename
+    
+    #Checking if image exists
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Image file not found on disk")
+    
+    return FileResponse(path=file_path, media_type="image/jpeg", filename=task.filename)
