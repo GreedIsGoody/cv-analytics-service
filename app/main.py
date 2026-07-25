@@ -49,6 +49,8 @@ async def process_image(
     #ML inference    
     try:
         detection_result = detector.detect_vehicles(str(file_location))
+        
+        detector.save_annotated_image(detection_result, str(file_location))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error of ML-interface: {str(e)}")
     
