@@ -1,15 +1,9 @@
-from pydantic_settings import BaseSettings 
-from dotenv import load_dotenv
-import os
-
-
-load_dotenv()
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "CV Analytics Service"
-    DATABASE_URL: str = os.getenv("DATABASE_URL")
-    class Config:
-        env_file = ".env"
-        
-        
+    DATABASE_URL: str
+
+    model_config = SettingsConfigDict(env_file=".env")
+
 settings = Settings()
