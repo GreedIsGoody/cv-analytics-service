@@ -21,9 +21,9 @@ async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
-        yield 
-        
+        yield     
         await engine.dispose()
+        
 #initialize our app
 app = FastAPI(title="CV Analytics Service", version="1.0.0", lifespan=lifespan)
 

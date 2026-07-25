@@ -18,4 +18,4 @@ async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
         
-        
+from app.models import DetectionTask, DetectedObject
