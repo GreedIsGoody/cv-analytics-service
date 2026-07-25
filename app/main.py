@@ -6,7 +6,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, status, File
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession 
-from sqlalchemy.future import select 
+from sqlalchemy import desc
+from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload 
 
 from app.database import engine, Base, get_db 
@@ -108,3 +109,15 @@ async def get_task_image(task_id: str, db: Annotated[AsyncSession, Depends(get_d
         raise HTTPException(status_code=404, detail="Image file not found on disk")
     
     return FileResponse(path=file_path, media_type="image/jpeg", filename=task.filename)
+
+
+@app.get("/api/v1/tasks/tasks/recent", response_model=List[DetectionTaskResponse])
+async def get_recent_tasks(db: Annotated[AsyncSession, Depends(get_db)]):
+    
+    query = select(DetectionTask).options(selectinload(DetectionTask.objects)).order_by(desc(DetectionTask.created_at)).limit(3)
+    
+    result = await db.execute(query)
+    
+    tasks = result.scalars().all()
+    
+    return tasks
